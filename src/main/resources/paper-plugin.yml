@@ -1,0 +1,4 @@
+name: amethyst
+version: '${version}'
+main: com.westongorczyca.amethyst
+api-version: '26.1.2'
