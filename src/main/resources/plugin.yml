@@ -1,0 +1,7 @@
+name: Amethyst
+version: "1.0-BETA"
+main: org.westongorczyca.amethyst.AmethystPlugin
+description: My plugin
+api-version: "26"
+bootstrapper: org.westongorczyca.amethyst.AmethystBootstrapper  # optional
+loader: org.westongorczyca.amethyst.AmethystLoader              # optional
