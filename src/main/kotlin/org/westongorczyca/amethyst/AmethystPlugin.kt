@@ -18,8 +18,10 @@ class AmethystPlugin : JavaPlugin(), Listener {
         val combatManager = CombatManager()
         val teleportManager = TeleportManager(this, combatManager)
         val homeManager = HomeManager(this)
+        val tradeManager = TradeManager()
         CustomItems.init(this)
         RecipeRegistry(this).registerAll()
+        server.pluginManager.registerEvents(TradeListener(this), this)
         server.pluginManager.registerEvents(this, this)
         server.pluginManager.registerEvents(EchoPickaxeListener(), this)
         server.pluginManager.registerEvents(CombatListener(combatManager), this)
@@ -162,6 +164,31 @@ class AmethystPlugin : JavaPlugin(), Listener {
                         }
                 )
             registrar.register(tpaHereCommand.build(), "Request another player to teleport to your location", emptyList())
+
+            val tradeCommand = Commands.literal("trade")
+                .then(
+                    Commands.argument("player", io.papermc.paper.command.brigadier.argument.ArgumentTypes.player())
+                        .executes { context ->
+                            val sender = context.source.sender as? Player ?: return@executes Command.SINGLE_SUCCESS
+
+                            val targetSelector = context.getArgument("player", io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver::class.java)
+                            val target = targetSelector.resolve(context.source).firstOrNull()
+
+                            if (target == null) {
+                                sender.sendMessage(
+                                    net.kyori.adventure.text.Component.text(
+                                        "Player not found.",
+                                        net.kyori.adventure.text.format.NamedTextColor.RED
+                                    )
+                                )
+                                return@executes Command.SINGLE_SUCCESS
+                            }
+
+                            tradeManager.startTrade(sender, target)
+                            Command.SINGLE_SUCCESS
+                        }
+                )
+            registrar.register(tradeCommand.build(), "Open a trade window with another player", emptyList())
         }
     }
 
