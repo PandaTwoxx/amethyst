@@ -5,15 +5,23 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.world.LootGenerateEvent
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.random.Random
 
 @Suppress("unused")
-class AmethystPlugin : JavaPlugin() {
+class AmethystPlugin : JavaPlugin(), Listener {
 
     override fun onEnable() {
         val combatManager = CombatManager()
         val teleportManager = TeleportManager(this, combatManager)
         val homeManager = HomeManager(this)
+        CustomItems.init(this)
+        RecipeRegistry(this).registerAll()
+        server.pluginManager.registerEvents(this, this)
+        server.pluginManager.registerEvents(EchoPickaxeListener(), this)
         server.pluginManager.registerEvents(CombatListener(combatManager), this)
         server.pluginManager.registerEvents(TeleportMoveListener(teleportManager), this)
 
@@ -85,9 +93,9 @@ class AmethystPlugin : JavaPlugin() {
             val combatCommand = Commands.literal("incombat")
                 .executes { context ->
                     val player: Player = context.source.sender as? Player ?: return@executes Command.SINGLE_SUCCESS
-                    if(combatManager.isInCombat(player.uniqueId)){
+                    if (combatManager.isInCombat(player.uniqueId)) {
                         player.sendMessage("You are in combat for another ${combatManager.getRemainingTime(player.uniqueId)} seconds.")
-                    }else{
+                    } else {
                         player.sendMessage("You are not in combat")
                     }
 
@@ -95,6 +103,18 @@ class AmethystPlugin : JavaPlugin() {
                 }
 
             registrar.register(combatCommand.build(), "Check if you are in combat", emptyList())
+        }
+    }
+
+    @EventHandler
+    fun onLootGenerate(event: LootGenerateEvent) {
+        val lootTableKey = event.lootTable.key.key
+
+        if (lootTableKey.contains("village")) {
+
+            if (Random.nextDouble() < 0.30) {
+                event.loot.add(CustomItems.createTemplateShard())
+            }
         }
     }
 
