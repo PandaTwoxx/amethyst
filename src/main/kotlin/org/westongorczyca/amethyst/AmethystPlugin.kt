@@ -11,8 +11,10 @@ import org.bukkit.plugin.java.JavaPlugin
 class AmethystPlugin : JavaPlugin() {
 
     override fun onEnable() {
-        val teleportManager = TeleportManager(this)
+        val combatManager = CombatManager()
+        val teleportManager = TeleportManager(this, combatManager)
         val homeManager = HomeManager(this)
+        server.pluginManager.registerEvents(CombatListener(combatManager), this)
         server.pluginManager.registerEvents(TeleportMoveListener(teleportManager), this)
 
         lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->
@@ -76,6 +78,23 @@ class AmethystPlugin : JavaPlugin() {
                 }
 
             registrar.register(homeCommand.build(), "Teleport to the home", emptyList())
+        }
+
+        lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+            val registrar = event.registrar()
+            val combatCommand = Commands.literal("incombat")
+                .executes { context ->
+                    val player: Player = context.source.sender as? Player ?: return@executes Command.SINGLE_SUCCESS
+                    if(combatManager.isInCombat(player.uniqueId)){
+                        player.sendMessage("You are in combat for another ${combatManager.getRemainingTime(player.uniqueId)} seconds.")
+                    }else{
+                        player.sendMessage("You are not in combat")
+                    }
+
+                    Command.SINGLE_SUCCESS
+                }
+
+            registrar.register(combatCommand.build(), "Check if you are in combat", emptyList())
         }
     }
 

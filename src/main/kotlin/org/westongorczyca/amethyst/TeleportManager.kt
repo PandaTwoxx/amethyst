@@ -10,12 +10,19 @@ import org.bukkit.scheduler.BukkitRunnable
 import java.util.UUID
 import kotlin.random.Random
 
-class TeleportManager(private val plugin: JavaPlugin) {
+class TeleportManager(private val plugin: JavaPlugin, private var combatManager: CombatManager) {
 
     private val pendingTeleports = mutableMapOf<UUID, Location>()
 
     fun startTeleport(player: Player, destination: Location, warmupSeconds: Int = 5) {
         val uuid = player.uniqueId
+        if (combatManager.isInCombat(uuid)) {
+            val secondsLeft = combatManager.getRemainingTime(uuid)
+            player.sendMessage(
+                Component.text("You cannot teleport while in combat! Wait $secondsLeft seconds.", NamedTextColor.RED)
+            )
+            return
+        }
 
         if (pendingTeleports.containsKey(uuid)) {
             player.sendMessage(Component.text("You are already preparing to teleport", NamedTextColor.RED))
