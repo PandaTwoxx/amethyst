@@ -1,7 +1,6 @@
 name: Amethyst
-version: "1.0-BETA"
+version: 1.0.1
 main: org.westongorczyca.amethyst.AmethystPlugin
-description: My plugin
-api-version: "26"
-bootstrapper: org.westongorczyca.amethyst.AmethystBootstrapper  # optional
-loader: org.westongorczyca.amethyst.AmethystLoader              # optional
+description: The echo pick plugin
+author: PandaTwo
+api-version: '26.1.2'

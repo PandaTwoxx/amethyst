@@ -1,19 +1,22 @@
 package org.westongorczyca.amethyst
 
 import com.mojang.brigadier.Command
+import com.mojang.brigadier.arguments.StringArgumentType
 import io.papermc.paper.command.brigadier.Commands
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
+@Suppress("unused")
 class AmethystPlugin : JavaPlugin() {
 
     override fun onEnable() {
         val teleportManager = TeleportManager(this)
-        val manager = this.lifecycleManager
+        val homeManager = HomeManager(this)
         server.pluginManager.registerEvents(TeleportMoveListener(teleportManager), this)
 
         lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+            val registrar = event.registrar()
             val spawnCommand = Commands.literal("spawn")
                 .executes { context ->
                     val player = context.source.sender as? Player ?: return@executes Command.SINGLE_SUCCESS
@@ -23,9 +26,12 @@ class AmethystPlugin : JavaPlugin() {
                     teleportManager.startTeleport(player, spawnLocation, warmupSeconds = 3)
                     Command.SINGLE_SUCCESS
                 }
+
+            registrar.register(spawnCommand.build(), "Go to spawn", emptyList())
         }
 
-        lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) {
+        lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+            val registrar = event.registrar()
             val rtpCommand = Commands.literal("rtp")
                 .executes { context ->
                     val player = context.source.sender as? Player ?: return@executes Command.SINGLE_SUCCESS
@@ -37,6 +43,39 @@ class AmethystPlugin : JavaPlugin() {
 
                     Command.SINGLE_SUCCESS
                 }
+
+            registrar.register(rtpCommand.build(), "Random teleport within 20000 blocks of spawn", emptyList())
+        }
+
+        lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+            val registrar = event.registrar()
+            val setHomeCommand = Commands.literal("sethome")
+                .then(Commands.argument("name", StringArgumentType.word()))
+                .executes { context ->
+                    val player: Player = context.source.sender as? Player ?: return@executes Command.SINGLE_SUCCESS
+                    homeManager.setHome(player.uniqueId, StringArgumentType.getString(context, "name"), player.location)
+
+                    Command.SINGLE_SUCCESS
+                }
+
+            registrar.register(setHomeCommand.build(), "Set a home location", emptyList())
+        }
+
+        lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->
+            val registrar = event.registrar()
+            val homeCommand = Commands.literal("home")
+                .then(Commands.argument("name", StringArgumentType.word()))
+                .executes { context ->
+                    val player: Player = context.source.sender as? Player ?: return@executes Command.SINGLE_SUCCESS
+                    val location = homeManager.getHome(player.uniqueId, StringArgumentType.getString(context, "name"))
+                    if (location != null) {
+                        teleportManager.startTeleport(player, location, warmupSeconds = 5)
+                    }
+
+                    Command.SINGLE_SUCCESS
+                }
+
+            registrar.register(homeCommand.build(), "Teleport to the home", emptyList())
         }
     }
 
