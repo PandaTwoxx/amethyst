@@ -37,7 +37,7 @@ object CustomItems {
                 persistentDataContainer.set(templateShardKey, PersistentDataType.BOOLEAN, true)
                 
                 // NEW: Direct String Item Model Assignment
-                setCustomModelDataString(shardModelKey)
+                setItemModel(templateShardKey)
             }
         }
     }
@@ -49,7 +49,7 @@ object CustomItems {
                 persistentDataContainer.set(smithingTemplateKey, PersistentDataType.BOOLEAN, true)
                 
                 // NEW: Direct String Item Model Assignment
-                setCustomModelDataString(templateModelKey)
+                setItemModel(templateShardKey)
             }
         }
     }
@@ -88,7 +88,7 @@ object CustomItems {
                 persistentDataContainer.set(echoPickaxeKey, PersistentDataType.BOOLEAN, true)
                 
                 // NEW: Direct String Item Model Assignment
-                setCustomModelDataString(pickaxeModelKey)
+                setItemModel(pickaxeModelKey)
             }
         }
     }
