@@ -23,6 +23,8 @@ class EchoPickaxeListener : Listener {
 
         if (breakingBlocks.contains(centerBlock)) return
 
+        spawnEchoParticle(centerBlock)
+
         val targetFace = player.getTargetBlockFace(5) ?: return
         val blocksToBreak = get3x3Blocks(centerBlock, targetFace)
 
@@ -36,9 +38,15 @@ class EchoPickaxeListener : Listener {
 
             if (!breakEvent.isCancelled) {
                 block.breakNaturally(mainHandItem)
+                spawnEchoParticle(block)
             }
             breakingBlocks.remove(block)
         }
+    }
+
+    private fun spawnEchoParticle(block: Block) {
+        val centerLocation = block.location.add(0.5, 0.5, 0.5)
+        block.world.spawnParticle(Particle.SCULK_CHARGE_POP, centerLocation, 5, 0.2, 0.2, 0.2, 0.0)
     }
 
     private fun get3x3Blocks(center: Block, face: BlockFace) : List<Block> {

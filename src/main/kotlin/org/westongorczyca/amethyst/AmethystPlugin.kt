@@ -196,11 +196,16 @@ class AmethystPlugin : JavaPlugin(), Listener {
     fun onLootGenerate(event: LootGenerateEvent) {
         val lootTableKey = event.lootTable.key.key
 
-        if (lootTableKey.contains("village")) {
+        if (lootTableKey.contains("ancient_city")) { 
+            if (Random.nextDouble() < 0.10) { 
+                event.loot.add(CustomItems.createTemplateShard()) 
+            } 
+        }
 
-            if (Random.nextDouble() < 0.30) {
-                event.loot.add(CustomItems.createTemplateShard())
-            }
+        if (lootTableKey.contains("mineshaft")) { 
+            if (Random.nextDouble() < 0.05) { 
+                event.loot.add(CustomItems.createTemplateShard()) 
+            } 
         }
     }
 

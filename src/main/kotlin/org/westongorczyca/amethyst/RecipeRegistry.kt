@@ -20,8 +20,8 @@ class RecipeRegistry(private val plugin: JavaPlugin) {
         val recipe = ShapedRecipe(key, CustomItems.createSmithingTemplate())
 
         recipe.shape(
-            "ASA",
-            "AEA",
+            "SSS",
+            "A S",
             "AAA"
         )
 
@@ -58,7 +58,7 @@ class RecipeRegistry(private val plugin: JavaPlugin) {
             CustomItems.createEchoPickaxe(),
             RecipeChoice.ExactChoice(CustomItems.createSmithingTemplate()), // Custom Template required
             RecipeChoice.MaterialChoice(Material.DIAMOND_PICKAXE),          // Base Item
-            RecipeChoice.MaterialChoice(Material.IRON_INGOT)                // Modifier material cost
+            RecipeChoice.MaterialChoice(Material.DIAMOND_PICKAXE)                // Modifier material cost
         )
 
         Bukkit.addRecipe(recipe)

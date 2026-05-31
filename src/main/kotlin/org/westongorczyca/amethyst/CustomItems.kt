@@ -1,4 +1,4 @@
-package org.westongorczyca.amethyst
+package org.westongorczyca.amethyst.util
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -14,18 +14,30 @@ object CustomItems {
     lateinit var smithingTemplateKey: NamespacedKey
     lateinit var echoPickaxeKey: NamespacedKey
 
+    // NEW: Modern 1.21.4+ String-based Item Model Keys
+    lateinit var shardModelKey: NamespacedKey
+    lateinit var templateModelKey: NamespacedKey
+    lateinit var pickaxeModelKey: NamespacedKey
+
     fun init(plugin: JavaPlugin) {
         templateShardKey = NamespacedKey(plugin, "echo_template_shard")
         smithingTemplateKey = NamespacedKey(plugin, "echo_smithing_template")
         echoPickaxeKey = NamespacedKey(plugin, "echo_pickaxe")
+
+        // Define the model string keys (this generates "amethyst:echo_template_shard", etc.)
+        shardModelKey = NamespacedKey(plugin, "echo_template_shard")
+        templateModelKey = NamespacedKey(plugin, "echo_smithing_template")
+        pickaxeModelKey = NamespacedKey(plugin, "echo_pickaxe")
     }
 
     fun createTemplateShard(): ItemStack {
         return ItemStack(Material.AMETHYST_SHARD).apply {
             itemMeta = itemMeta?.apply {
-                displayName(Component.text("Echo Template Shard", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false))
-                lore(listOf(Component.text("Combine with echo shards and amethyst to craft a template.", NamedTextColor.GRAY)))
+                displayName(Component.text("Echo Upgrade Shard", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
                 persistentDataContainer.set(templateShardKey, PersistentDataType.BOOLEAN, true)
+                
+                // NEW: Direct String Item Model Assignment
+                setItemModel(shardModelKey)
             }
         }
     }
@@ -33,9 +45,11 @@ object CustomItems {
     fun createSmithingTemplate(): ItemStack {
         return ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE).apply {
             itemMeta = itemMeta?.apply {
-                displayName(Component.text("Echo Smithing Template", NamedTextColor.DARK_AQUA).decoration(TextDecoration.ITALIC, false))
-                lore(listOf(Component.text("Echo Upgrade", NamedTextColor.BLUE)))
+                displayName(Component.text("Echo Upgrade", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false))
                 persistentDataContainer.set(smithingTemplateKey, PersistentDataType.BOOLEAN, true)
+                
+                // NEW: Direct String Item Model Assignment
+                setItemModel(templateModelKey)
             }
         }
     }
@@ -43,9 +57,38 @@ object CustomItems {
     fun createEchoPickaxe(): ItemStack {
         return ItemStack(Material.DIAMOND_PICKAXE).apply {
             itemMeta = itemMeta?.apply {
-                displayName(Component.text("Echo Pickaxe", NamedTextColor.DARK_AQUA).decoration(TextDecoration.ITALIC, false))
-                lore(listOf(Component.text("Allows you to mine a 3x3 area.", NamedTextColor.DARK_PURPLE)))
+                displayName(Component.text("Echo Pickaxe", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
+
+                val loreLines = listOf(
+                    // Line 1: Blank space
+                    Component.empty(), 
+                    
+                    Component.text("Ability:")
+                        .color(NamedTextColor.GRAY)
+                        .decoration(TextDecoration.ITALIC, false),
+                        
+                    Component.text(" Imbued with the power of echolocation,")
+                        .color(NamedTextColor.BLUE)
+                        .decoration(TextDecoration.ITALIC, false),
+                        
+                    Component.text(" allowing the user to vibrate all nearby")
+                        .color(NamedTextColor.BLUE)
+                        .decoration(TextDecoration.ITALIC, false),
+                        
+                    Component.text(" blocks when breaking one, mining a 3x3")
+                        .color(NamedTextColor.BLUE)
+                        .decoration(TextDecoration.ITALIC, false),
+                        
+                    Component.text(" tunnel instead of a 1x1.")
+                        .color(NamedTextColor.BLUE)
+                        .decoration(TextDecoration.ITALIC, false)
+                )
+
+                lore(loreLines)
                 persistentDataContainer.set(echoPickaxeKey, PersistentDataType.BOOLEAN, true)
+                
+                // NEW: Direct String Item Model Assignment
+                setItemModel(pickaxeModelKey)
             }
         }
     }
