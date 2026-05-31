@@ -1,5 +1,6 @@
 package org.westongorczyca.amethyst
 
+import org.bukkit.Particle
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.event.EventHandler

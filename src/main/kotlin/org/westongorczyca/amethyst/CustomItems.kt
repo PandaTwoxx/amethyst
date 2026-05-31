@@ -1,4 +1,4 @@
-package org.westongorczyca.amethyst.util
+package org.westongorczyca.amethyst
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
