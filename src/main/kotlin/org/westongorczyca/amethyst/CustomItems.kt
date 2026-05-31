@@ -35,9 +35,9 @@ object CustomItems {
             itemMeta = itemMeta?.apply {
                 displayName(Component.text("Echo Upgrade Shard", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
                 persistentDataContainer.set(templateShardKey, PersistentDataType.BOOLEAN, true)
-                
-                // NEW: Direct String Item Model Assignment
-                setItemModel(templateShardKey)
+                val modelData = customModelDataComponent
+                modelData.strings = listOf("echo_template_shard")
+                setCustomModelDataComponent(modelData)
             }
         }
     }
@@ -47,9 +47,9 @@ object CustomItems {
             itemMeta = itemMeta?.apply {
                 displayName(Component.text("Echo Upgrade", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false))
                 persistentDataContainer.set(smithingTemplateKey, PersistentDataType.BOOLEAN, true)
-                
-                // NEW: Direct String Item Model Assignment
-                setItemModel(templateShardKey)
+                val modelData = customModelDataComponent
+                modelData.strings = listOf("echo_smithing_template")
+                setCustomModelDataComponent(modelData)
             }
         }
     }
@@ -58,37 +58,18 @@ object CustomItems {
         return ItemStack(Material.DIAMOND_PICKAXE).apply {
             itemMeta = itemMeta?.apply {
                 displayName(Component.text("Echo Pickaxe", NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
-
-                val loreLines = listOf(
-                    // Line 1: Blank space
-                    Component.empty(), 
-                    
-                    Component.text("Ability:")
-                        .color(NamedTextColor.GRAY)
-                        .decoration(TextDecoration.ITALIC, false),
-                        
-                    Component.text(" Imbued with the power of echolocation,")
-                        .color(NamedTextColor.BLUE)
-                        .decoration(TextDecoration.ITALIC, false),
-                        
-                    Component.text(" allowing the user to vibrate all nearby")
-                        .color(NamedTextColor.BLUE)
-                        .decoration(TextDecoration.ITALIC, false),
-                        
-                    Component.text(" blocks when breaking one, mining a 3x3")
-                        .color(NamedTextColor.BLUE)
-                        .decoration(TextDecoration.ITALIC, false),
-                        
-                    Component.text(" tunnel instead of a 1x1.")
-                        .color(NamedTextColor.BLUE)
-                        .decoration(TextDecoration.ITALIC, false)
-                )
-
-                lore(loreLines)
+                lore(listOf(
+                    Component.empty(),
+                    Component.text("Ability:").color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false),
+                    Component.text(" Imbued with the power of echolocation,").color(NamedTextColor.BLUE).decoration(TextDecoration.ITALIC, false),
+                    Component.text(" allowing the user to vibrate all nearby").color(NamedTextColor.BLUE).decoration(TextDecoration.ITALIC, false),
+                    Component.text(" blocks when breaking one, mining a 3x3").color(NamedTextColor.BLUE).decoration(TextDecoration.ITALIC, false),
+                    Component.text(" tunnel instead of a 1x1.").color(NamedTextColor.BLUE).decoration(TextDecoration.ITALIC, false)
+                ))
                 persistentDataContainer.set(echoPickaxeKey, PersistentDataType.BOOLEAN, true)
-                
-                // NEW: Direct String Item Model Assignment
-                setItemModel(pickaxeModelKey)
+                val modelData = customModelDataComponent
+                modelData.strings = listOf("echo_pickaxe")
+                setCustomModelDataComponent(modelData)
             }
         }
     }
