@@ -26,7 +26,6 @@ class RecipeRegistry(private val plugin: JavaPlugin) {
         )
 
         recipe.setIngredient('S', RecipeChoice.ExactChoice(CustomItems.createTemplateShard()))
-        recipe.setIngredient('E', Material.ECHO_SHARD)
         recipe.setIngredient('A', Material.AMETHYST_SHARD)
 
         Bukkit.addRecipe(recipe)
