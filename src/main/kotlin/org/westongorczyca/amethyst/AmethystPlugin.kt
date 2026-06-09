@@ -189,6 +189,51 @@ class AmethystPlugin : JavaPlugin(), Listener {
                         }
                 )
             registrar.register(tradeCommand.build(), "Open a trade window with another player", emptyList())
+
+            val giveCommand = Commands.literal("amgive")
+                .requires{ source -> source.sender.isOp() && source.sender is Player }
+                .then(
+                    Commands.argument("item", com.mojang.brigadier.arguments.StringArgumentType.word())
+                        .suggests { _, builder ->
+                            // Provide neat drop-down tab completion in chat
+                            builder.suggest("shard")
+                            builder.suggest("template")
+                            builder.suggest("pickaxe")
+                            builder.buildFuture()
+                        }
+                        .executes { context ->
+                            val player = context.source.sender as? Player ?: return@executes com.mojang.brigadier.Command.SINGLE_SUCCESS
+                            val itemType = com.mojang.brigadier.arguments.StringArgumentType.getString(context, "item").lowercase()
+
+                            // Resolve the item from your CustomItems factory
+                            val itemToGive = when (itemType) {
+                                "shard" -> CustomItems.createTemplateShard()
+                                "template" -> CustomItems.createSmithingTemplate()
+                                "pickaxe" -> CustomItems.createEchoPickaxe()
+                                else -> {
+                                    player.sendMessage(net.kyori.adventure.text.Component.text("Unknown custom item type!", net.kyori.adventure.text.format.NamedTextColor.RED))
+                                    return@executes com.mojang.brigadier.Command.SINGLE_SUCCESS
+                                }
+                            }
+
+                            // Give the item cleanly using your safe inventory fallback method
+                            val overFlow = player.inventory.addItem(itemToGive)
+                            if (overFlow.isNotEmpty()) {
+                                for (leftOver in overFlow.values) {
+                                    player.world.dropItemNaturally(player.location, leftOver)
+                                }
+                                player.sendMessage(net.kyori.adventure.text.Component.text("Your inventory was full! Item dropped at your feet.", net.kyori.adventure.text.format.NamedTextColor.YELLOW))
+                            } else {
+                                player.sendMessage(
+                                    net.kyori.adventure.text.Component.text("Gave you 1x ", net.kyori.adventure.text.format.NamedTextColor.GREEN)
+                                        .append(itemToGive.itemMeta?.displayName() ?: net.kyori.adventure.text.Component.text(itemType))
+                                )
+                            }
+
+                            com.mojang.brigadier.Command.SINGLE_SUCCESS
+                        }
+                )
+            registrar.register(giveCommand.build(), "Give custom Amethyst items", listOf("agive"))
         }
     }
 
@@ -197,13 +242,13 @@ class AmethystPlugin : JavaPlugin(), Listener {
         val lootTableKey = event.lootTable.key.key
 
         if (lootTableKey.contains("ancient_city")) { 
-            if (Random.nextDouble() < 0.10) { 
+            if (Random.nextDouble() < 0.30) {
                 event.loot.add(CustomItems.createTemplateShard()) 
             } 
         }
 
         if (lootTableKey.contains("mineshaft")) { 
-            if (Random.nextDouble() < 0.05) { 
+            if (Random.nextDouble() < 0.10) {
                 event.loot.add(CustomItems.createTemplateShard()) 
             } 
         }

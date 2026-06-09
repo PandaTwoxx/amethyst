@@ -12,6 +12,7 @@ class HomeManager(private val plugin: JavaPlugin) {
     private val config: FileConfiguration get() = plugin.config
 
     init {
+        plugin.reloadConfig()
         loadHomesFromConfig()
     }
 
