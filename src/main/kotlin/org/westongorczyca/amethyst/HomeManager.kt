@@ -32,10 +32,12 @@ class HomeManager(private val plugin: JavaPlugin) {
 
 
     fun getHome(uuid: UUID, name: String): Location? {
+        plugin.reloadConfig()
         return homeStorage[uuid]?.get(name.lowercase())
     }
 
     fun getHomeNames(uuid: UUID): List<String> {
+        plugin.reloadConfig()
         return homeStorage[uuid]?.keys?.toList() ?: emptyList()
     }
 

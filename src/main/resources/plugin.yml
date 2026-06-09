@@ -1,5 +1,5 @@
 name: Amethyst
-version: 1.3.5
+version: 1.4.1
 main: org.westongorczyca.amethyst.AmethystPlugin
 description: The echo pick plugin
 author: PandaTwo
